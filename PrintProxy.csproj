@@ -324,6 +324,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\LoginResponse.cs" />
     <Compile Include="Models\PrintJob.cs" />
     <Compile Include="Models\ProductNotification.cs" />
     <Compile Include="PrintProxyClient.cs" />
@@ -337,12 +338,13 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AuthService.cs" />
+    <Compile Include="Services\IServices\IAuthService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="appsettings.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

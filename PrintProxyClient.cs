@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PrintProxy.Models;
+using PrintProxy.Services;
+using PrintProxy.Services.IServices;
 using System;
 using System.Configuration;
 using System.Threading;
@@ -15,22 +17,24 @@ namespace PrintProxy
         private HubConnection _connection;
         private readonly IPrintService _printService;
         private readonly ILogger<PrintProxyClient> _logger;
-        private readonly string _serverUrl;
-        private readonly string _authToken;
-        public PrintProxyClient(IPrintService printService, ILogger<PrintProxyClient> logger, IConfiguration configuration)
+        private readonly string _productHubServerUrl;
+        private readonly IAuthService _authService;
+        private string _currentToken;
+
+        public PrintProxyClient(IPrintService printService, ILogger<PrintProxyClient> logger, IConfiguration configuration, IAuthService authService)
         {
             _printService = printService;
             _logger = logger;
-            _serverUrl = configuration["ServerUrl"];
-            _authToken = configuration["AuthToken"];
+            _authService = authService;
+            _productHubServerUrl = configuration["ProductHubServerUrl"];
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-
+            _currentToken = await _authService.LoginAsync();
             _connection = new HubConnectionBuilder()
-                .WithUrl(_serverUrl, options => {
-                    options.Headers["Authorization"] = $"Bearer {_authToken}";
+                .WithUrl(_productHubServerUrl, options => {
+                    options.Headers["Authorization"] = $"Bearer {_currentToken}";
                 })
                 .WithAutomaticReconnect()
                 .Build();

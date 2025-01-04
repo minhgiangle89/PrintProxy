@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PrintProxy.Services;
+using PrintProxy.Services.IServices;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,6 +42,7 @@ namespace PrintProxy
                 services.AddHostedService<PrintProxyService>();
                 services.AddSingleton<PrintProxyClient>();
                 services.AddSingleton<IPrintService, PrintService>();
+                services.AddSingleton<IAuthService, AuthService>();
                 services.AddSingleton<IHubConnectionBuilder, HubConnectionBuilder>();
             })
             .ConfigureLogging((hostContext, logging) =>
