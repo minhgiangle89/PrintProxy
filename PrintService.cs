@@ -23,9 +23,8 @@ namespace PrintProxy
         {
             try
             {
-                // Thực hiện in thực tế tại đây
                 _logger.LogInformation($"Printing job {job.JobId}");
-                await Task.Delay(2000); // Giả lập thời gian in
+                await Task.Delay(2000); 
 
                 return new PrintResult { Success = true, Message = "Print completed" };
             }
@@ -46,13 +45,8 @@ namespace PrintProxy
             {
                 _logger.LogInformation($"Processing notification for product {notification.ProductId}");
 
-                // Thêm vào queue
                 _notificationQueue.Enqueue(notification);
 
-                // Giả lập thời gian xử lý
-                await Task.Delay(1000);
-
-                // Xử lý thông báo từ queue
                 while (_notificationQueue.Count > 0)
                 {
                     var currentNotification = _notificationQueue.Dequeue();

@@ -31,7 +31,7 @@ namespace PrintProxy
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            _currentToken = await _authService.LoginAsync();
+            _currentToken =  await _authService.LoginAsync();
             _connection = new HubConnectionBuilder()
                 .WithUrl(_productHubServerUrl, options => {
                     options.Headers["Authorization"] = $"Bearer {_currentToken}";
@@ -61,31 +61,6 @@ namespace PrintProxy
                     _logger.LogError($"Print error: {ex.Message}");
                     await _connection.InvokeAsync("PrintJobCompleted",
                         printJob.JobId,
-                        false,
-                        ex.Message);
-                }
-            });
-
-            _connection.On<ProductNotification>("NewProduct", async (notification) =>
-            {
-                try
-                {
-                    _logger.LogInformation($"Nhận được thông báo sản phẩm mới: {notification.ProductId}");
-
-                    // Xử lý thông báo
-                    var result = await _printService.ProcessProductNotificationAsync(notification);
-
-                    // Gửi kết quả về server
-                    await _connection.InvokeAsync("NotificationProcessed",
-                        notification.ProductId,
-                        result.Success,
-                        result.Message);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Lỗi xử lý thông báo: {ex.Message}");
-                    await _connection.InvokeAsync("NotificationProcessed",
-                        notification.ProductId,
                         false,
                         ex.Message);
                 }
@@ -143,3 +118,4 @@ namespace PrintProxy
         }
     }
 }
+

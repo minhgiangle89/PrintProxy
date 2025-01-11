@@ -21,29 +21,43 @@ namespace PrintProxy.Services
         private readonly string _serverUrl;
         private readonly string _authUser;
         private readonly string _authPass;
+        private readonly string _clientId;
+        private readonly string _clientSecret;
+        private readonly string _m2mServerUrl;
         public AuthService(IConfiguration configuration, ILogger<PrintProxyClient> logger)
         {
             _httpClient = new HttpClient();
             _logger = logger;
             _configuration = configuration;
-            _serverUrl = configuration["AuthServerUrl"];
-            _authUser = configuration["AuthName"];
-            _authPass = configuration["AuthPass"];
+            //_serverUrl = configuration["AuthServerUrl"];
+            //_authUser = configuration["AuthName"];
+            //_authPass = configuration["AuthPass"];
+
+            _m2mServerUrl = configuration["AuthM2MServerUrl"];
+            _clientId = configuration["ClientID"];
+            _clientSecret = configuration["ClientSecret"];
         }
 
         public async Task<string> LoginAsync()
         {
             try
             {
-                var loginRequest = new
+                //var loginRequest = new
+                //{
+                //    userName = _authUser,
+                //    password = _authPass
+                //};
+
+                var loginM2MRequest = new
                 {
-                    userName = _authUser,
-                    password = _authPass
+                    ClientId = _clientId,
+                    ClientSecret = _clientSecret
                 };
 
-                var jsonContent = JsonConvert.SerializeObject(loginRequest);
+
+                var jsonContent = JsonConvert.SerializeObject(loginM2MRequest);
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(_serverUrl, content);
+                var response = await _httpClient.PostAsync(_m2mServerUrl, content);
 
                 var responseContent = await response.Content.ReadAsStringAsync();
 
